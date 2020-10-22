@@ -33,5 +33,10 @@ namespace GTASave.Blocks
     {
         public int Version;
         public string SaveName;
+        // unknown fields
+        public int CameraX;
+        public int CameraY;
+        public int CameraZ;
+        public int MinuteLength;
     }
 }

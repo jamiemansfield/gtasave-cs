@@ -44,7 +44,7 @@ namespace GTASave
         public Save ReadSave()
         {
             Save save = new Save();
-            save.Block00 = ReadBlock00();
+            save.Block00 = this.ReadBlock00();
             return save;
         }
 
@@ -72,8 +72,13 @@ namespace GTASave
         {
             ReadBlockHeader();
             Block00 block = new Block00();
-            block.Version = ReadInt32();
-            block.SaveName = ReadGTAString(100);
+            block.Version = this.ReadInt32();
+            block.SaveName = this.ReadGTAString(100);
+            ReadBytes(8); // unknown
+            block.CameraX = this.ReadInt32();
+            block.CameraY = this.ReadInt32();
+            block.CameraZ = this.ReadInt32();
+            block.MinuteLength = this.ReadInt32();
             return block;
         }
 
