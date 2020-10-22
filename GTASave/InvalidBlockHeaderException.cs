@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of gtasave-cs, licensed under the MIT License (MIT).
  * 
  * Copyright (c) Jamie Mansfield <https://www.jamiemansfield.me/>
@@ -23,52 +23,26 @@
  * THE SOFTWARE.
  */
 
-using GTASave;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Text;
 
-namespace GTASaveTests
+namespace GTASave
 {
-    [TestClass]
-    public class SaveReaderTest
+    public class InvalidBlockHeaderException : IOException
     {
-        [TestMethod]
-        public void TestReadBlockHeader()
+        public InvalidBlockHeaderException()
         {
-            byte[] raw = Encoding.ASCII.GetBytes("BLOCKblockBLOCKb");
-            SaveReader reader = new SaveReader(new MemoryStream(raw));
-
-            reader.ReadBlockHeader();
-            Assert.ThrowsException<InvalidBlockHeaderException>(() =>
-            {
-                reader.ReadBlockHeader();
-            });
-            reader.ReadBlockHeader();
-            Assert.ThrowsException<InvalidBlockHeaderException>(() =>
-            {
-                reader.ReadBlockHeader();
-            });
         }
 
-        [TestMethod]
-        public void TestReadGTAString()
+        public InvalidBlockHeaderException(string message) : base(message)
         {
-            byte[] real = Encoding.ASCII.GetBytes("Example");
-            byte[] raw = new byte[real.Length + 1];
-            Array.Copy(real, raw, real.Length);
-            raw[real.Length] = 0;
+        }
 
-            SaveReader reader = new SaveReader(new MemoryStream(raw));
-            string read = reader.ReadGTAString(raw.Length);
-
-            Assert.AreEqual("Example", read);
-
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
-            {
-                reader.ReadGTAString(-1);
-            });
+        public InvalidBlockHeaderException(string message, Exception innerException) : base(message, innerException)
+        {
         }
     }
 }

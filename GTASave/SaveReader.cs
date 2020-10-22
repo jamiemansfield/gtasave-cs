@@ -33,15 +33,11 @@ namespace GTASave
 {
     public class SaveReader : BinaryReader
     {
-        public SaveReader(Stream input) : base(input)
+        public SaveReader(Stream input) : base(input, Encoding.ASCII)
         {
         }
 
-        public SaveReader(Stream input, Encoding encoding) : base(input, encoding)
-        {
-        }
-
-        public SaveReader(Stream input, Encoding encoding, bool leaveOpen) : base(input, encoding, leaveOpen)
+        public SaveReader(Stream input, bool leaveOpen) : base(input, Encoding.ASCII, leaveOpen)
         {
         }
 
@@ -52,15 +48,24 @@ namespace GTASave
             return save;
         }
 
+        /// <summary>
+        /// Reads a blocks header, "BLOCK".
+        /// </summary>
+        /// <exception cref="InvalidBlockHeaderException">Block header doesn't match expected</exception>
         public void ReadBlockHeader()
         {
-            // TODO: Make this throw an exception if not at a block header. Need to
-            // TODO: research what the convention is for doing so.
-            ReadByte(); // B
-            ReadByte(); // L
-            ReadByte(); // O
-            ReadByte(); // C
-            ReadByte(); // K
+            try
+            {
+                string header = new string(ReadChars(5));
+                if (!header.Equals("BLOCK"))
+                {
+                    throw new InvalidBlockHeaderException("Expected \"BLOCK\" not \"" + header + "\"");
+                }
+            }
+            catch(IOException ex)
+            {
+                throw new InvalidBlockHeaderException("Failed to read block header", ex);
+            }
         }
 
         public Block00 ReadBlock00()
@@ -72,11 +77,21 @@ namespace GTASave
             return block;
         }
 
+        /// <summary>
+        /// Reads a string from the save file, that has been encoded with a fixed
+        /// length and padded with raw zeros.
+        /// </summary>
+        /// <param name="length">The fixed length of the string in the save file</param>
+        /// <returns>The value, omitting the padding</returns>
+        /// <exception cref="ArgumentOutOfRangeException">length is negative</exception>
         public string ReadGTAString(int length)
         {
-            // IMPL-NOTE: "GTA Strings" are of a known, fixed length, and padded with
-            // IMPL-NOTE: /raw/ zeros to make up the fixed length.
-            byte[] raw = ReadBytes(length);
+            if (length < 0)
+            {
+                throw new ArgumentOutOfRangeException("length is negative");
+            }
+
+            char[] raw = ReadChars(length);
 
             int realLength = 0;
             for (int i = 0; i < raw.Length; i++)
@@ -92,10 +107,9 @@ namespace GTASave
             }
             realLength++;
 
-            byte[] real = new byte[realLength];
+            char[] real = new char[realLength];
             Array.Copy(raw, real, realLength);
-
-            return Encoding.ASCII.GetString(real);
+            return new string(real);
         }
     }
 }
