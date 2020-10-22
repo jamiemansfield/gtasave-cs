@@ -7,6 +7,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTASave", "GTASave\GTASave.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTASaveTests", "GTASaveTests\GTASaveTests.csproj", "{8F0E443F-4860-4F17-9CCF-B8021C53B624}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8635E2C8-8434-42CE-A8FC-33B8D97C2B68}"
+	ProjectSection(SolutionItems) = preProject
+		HEADER.txt = HEADER.txt
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
